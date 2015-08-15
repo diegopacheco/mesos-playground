@@ -1,0 +1,11 @@
+$ sudo service mesos-master start
+$ sudo service mesos-slave start
+$ sudo netstat -nlp | grep mesos
+
+GO: http://192.168.33.10:5050
+
+$ export MASTER=$(mesos-resolve `cat /etc/mesos/zk` 2>/dev/null)
+$ mesos help
+$ mesos-execute --master=$MASTER --name="cluster-test" --command="sleep 40"
+
+$  mesos ps --master=$MASTER

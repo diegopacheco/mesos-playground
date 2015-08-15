@@ -1,0 +1,13 @@
+$ sudo service marathon start
+
+# GOTO: http://192.168.33.10:8080/#/apps
+# create a new APP, name: testpythonserver
+# DISK: 10
+# Command: python -m SimpleHTTPServer 8000
+# PORTS: 8000
+# DEPLOY!
+
+# to check if is running
+# GOTO: http://192.168.33.10:8000/
+$ sudo netstat -nlp | grep 8000
+$ curl http://192.168.33.10:8000/
