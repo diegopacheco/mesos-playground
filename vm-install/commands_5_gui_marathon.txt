@@ -12,4 +12,3 @@
 $ sudo ps aux | grep python
 $ sudo kill -9 PYTHON_SIMPLE_SERVER_PID
 # once you kill once instance marathon will bootup a need node.
-
