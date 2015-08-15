@@ -1,0 +1,5 @@
+$ sudo yum -y install chronos
+$ sudo service chronos start
+
+# GOTO: http://192.168.33.10:4400/
+# add chronos in maratho, commad: sudo service chronos start
