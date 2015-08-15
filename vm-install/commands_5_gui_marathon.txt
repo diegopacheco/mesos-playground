@@ -1,0 +1,15 @@
+# GOTO: http://192.168.33.10:8080/#/apps
+# create a new APP, name: testpythonserver2
+# DISK: 10
+# Command: python -m SimpleHTTPServer $PORT
+# PORTS: 0
+# DEPLOY!
+
+# THEM GO: http://192.168.33.10:8080/#/apps
+# select the APP
+# SCALE: 2
+
+$ sudo ps aux | grep python
+$ sudo kill -9 PYTHON_SIMPLE_SERVER_PID
+# once you kill once instance marathon will bootup a need node.
+
