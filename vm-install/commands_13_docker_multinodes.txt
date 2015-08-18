@@ -1,43 +1,20 @@
-# on node1(master) that has go already
+NODE1
 
-$ sudo yum install -y golang git device-mapper-event-libs docker
+$ sudo docker save --output=outyet.tar.gz outyet
+$ cp outyet.tar.gz /vagrant/
+
+NODE2
+
+$ vagrant ssh node2
+$ sudo yum install -y device-mapper-event-libs docker
 $ sudo chkconfig docker on
 $ sudo service docker start
-$ export GOPATH=~/go
-$ go get github.com/golang/example/outyet
-$ cd $GOPATH/src/github.com/golang/example/outyet
-
-$ sudo docker build -t outyet .
-$ sudo docker run --publish 6060:8080 --name test --rm outyet
-
 $ echo 'docker,mesos' | sudo tee /etc/mesos-slave/containerizers
-$ sudo service mesos-slave restart
+$ sudo service mesos-slave stop
 $ sudo service mesos-slave start
 
-GOTO: http://192.168.33.10:6060/
+$ sudo docker load --input=/vagrant/outyet.tar.gz
+$ sudo docker run --publish 6060:8080 --name test --rm outyet
 
-# deploy using marathon ui.
+GOTO: http://192.168.33.11:6060
 
-$ sudo vi /vagrant/outyet.json
-{
-  "id": "outyet",
-  "cpus": 0.2,
-  "mem": 20.0,
-  "instances": 1,
-  "constraints": [["hostname", "UNIQUE", ""]],
-  "container": {
-    "type": "DOCKER",
-    "docker": {
-      "image": "outyet",
-      "network": "BRIDGE",
-      "portMappings": [
-        { "containerPort": 8080, "hostPort": 0, "servicePort": 0, "protocol": "tcp" }
-      ]
-    }
-  }
-}
-
-$ echo 'docker,mesos' | sudo tee /etc/mesos-slave/containerizers
-$ sudo service mesos-slave restart
-
-$ curl -X POST http://192.168.33.10:8080/v2/apps -d @/vagrant/outyet.json -H "Content-type: application/json"
