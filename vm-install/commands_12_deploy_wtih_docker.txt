@@ -17,3 +17,27 @@ $ sudo service mesos-slave start
 GOTO: http://192.168.33.10:6060/
 
 # deploy using marathon ui.
+
+$ sudo vi /vagrant/outyet.json
+{
+  "id": "outyet",
+  "cpus": 0.2,
+  "mem": 20.0,
+  "instances": 1,
+  "constraints": [["hostname", "UNIQUE", ""]],
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "outyet",
+      "network": "BRIDGE",
+      "portMappings": [
+        { "containerPort": 8080, "hostPort": 0, "servicePort": 0, "protocol": "tcp" }
+      ]
+    }
+  }
+}
+
+$ echo 'docker,mesos' | sudo tee /etc/mesos-slave/containerizers
+$ sudo service mesos-slave restart
+
+$ curl -X POST http://192.168.33.10:8080/v2/apps -d @/vagrant/outyet.json -H "Content-type: application/json"
