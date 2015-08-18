@@ -1,0 +1,11 @@
+Course:
+http://open.mesosphere.com/intro-course/
+
+Marhaton: 
+http://192.168.33.10:8080/#/apps/
+
+Mesos:
+http://192.168.33.10:5050/#/
+
+Chronos:
+http://192.168.33.10:4400/
