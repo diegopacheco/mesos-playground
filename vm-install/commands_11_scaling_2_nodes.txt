@@ -1,0 +1,2 @@
+View the two Mesos nodes in the Marathon GUI and see how they are displayed.
+Use the Marathon GUI to scale down your nodes to 0, then with the newly added node2 active, scale it back up to 4 so you can see them be distributed across the little cluster.
