@@ -3,6 +3,7 @@
 # DISK: 10
 # Command: python -m SimpleHTTPServer $PORT
 # PORTS: 0
+# const: hostname:CLUSTER:node1
 # DEPLOY!
 
 # THEM GO: http://192.168.33.10:8080/#/apps

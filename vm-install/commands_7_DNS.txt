@@ -1,6 +1,6 @@
 $ sudo yum -y install golang git bind-utils
 
-$ sudo yum install vim
+$ sudo yum -y install vim
 
 $ mkdir ~/go
 $ export GOPATH=$HOME/go
