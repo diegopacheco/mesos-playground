@@ -1,5 +1,20 @@
+SINGLE HOST
+
 $ sudo service zookeeper-server start
 $ sudo service mesos-master start
 $ sudo service mesos-slave start
 $ export MASTER=$(mesos-resolve `cat /etc/mesos/zk` 2>/dev/null)
 $ sudo service marathon start
+
+VAGRANT MULTI-PROJECTS
+
+node1(master)
+
+$ sudo service zookeeper-server start
+$ sudo service mesos-master start
+$ sudo service mesos-slave start
+$ export MASTER=$(mesos-resolve `cat /etc/mesos/zk` 2>/dev/null)
+$ sudo service marathon start
+
+node2(slave)
+$ sudo service mesos-slave start
