@@ -1,0 +1,19 @@
+# on node1(master) that has go already
+
+$ sudo yum install -y golang git device-mapper-event-libs docker
+$ sudo chkconfig docker on
+$ sudo service docker start
+$ export GOPATH=~/go
+$ go get github.com/golang/example/outyet
+$ cd $GOPATH/src/github.com/golang/example/outyet
+
+$ sudo docker build -t outyet .
+$ sudo docker run --publish 6060:8080 --name test --rm outyet
+
+$ echo 'docker,mesos' | sudo tee /etc/mesos-slave/containerizers
+$ sudo service mesos-slave restart
+$ sudo service mesos-slave start
+
+GOTO: http://192.168.33.10:6060/
+
+# deploy using marathon ui.
