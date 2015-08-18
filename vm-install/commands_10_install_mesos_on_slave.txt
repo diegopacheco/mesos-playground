@@ -1,0 +1,24 @@
+$ vagrant up node2
+$ vagrant ssh node2
+
+$ sudo rpm -Uvh http://repos.mesosphere.com/el/7/noarch/RPMS/mesosphere-el-repo-7-1.noarch.rpm
+$ sudo yum -y install mesos
+
+$ sudo vi /etc/hosts
+#
+# Make sure to remove the "node2" mentioned on the first line for the 127.0.0.1 address.
+#
+192.168.33.10 node1
+192.168.33.11 node2
+
+$ ping node2
+# DO the same for node1, vagrant ssh node1 them add some hosts
+
+#
+# NODE 2
+#
+$ sudo vi /etc/mesos/zk
+zk://192.168.33.10:2181/mesos
+
+$ sudo chkconfig mesos-slave on
+$ sudo chkconfig mesos-master off
