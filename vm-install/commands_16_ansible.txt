@@ -1,0 +1,135 @@
+links: 
+
+http://docs.ansible.com/ansible/intro_installation.html
+http://docs.vagrantup.com/v2/provisioning/ansible.html
+
+$ vagrant destroy -f
+
+[playbook.yml]
+---
+- hosts: master
+  remote_user: vagrant
+  sudo: yes
+  tasks:
+      - name: update the hosts file
+        template: src=./hosts.j2 dest=/etc/hosts
+      - name: install the mesosphere yum repo
+        shell: rpm -Uvh http://repos.mesosphere.com/el/7/noarch/RPMS/mesosphere-el-repo-7-1.noarch.rpm
+      - name: install zookeeper repo
+        shell: rpm -Uvh http://archive.cloudera.com/cdh4/one-click-install/redhat/6/x86_64/cloudera-cdh-4-0.x86_64.rpm
+      - name: install zookeeper
+        yum: pkg=zookeeper,zookeeper-server state=latest
+      - name: configure zookeeper ID
+        shell: sudo -u zookeeper zookeeper-server-initialize --myid=1
+      - name: install the mesos, marathon, chronos, docker packages
+        yum: pkg=device-mapper-event-libs,mesos,marathon,chronos,docker state=latest
+      - name: configure containerizers
+        shell: echo 'docker,mesos' | sudo tee /etc/mesos-slave/containerizers
+      - name: start up zookeeper
+        service: name=zookeeper-server state=started enabled=yes
+      - name: start up the mesos-master
+        service: name=mesos-master state=started enabled=yes
+      - name: make sure mesos-slave is running
+        service: name=mesos-slave state=started enabled=yes
+      - name: start marathon
+        service: name=marathon state=started enabled=yes
+      - name: start chronos
+        service: name=chronos state=started enabled=yes
+      - name: start docker
+        service: name=docker state=started enabled=yes
+      - name: install go and dns tools
+        yum: pkg=golang,git,bind-utils state=latest
+      - name: build mesos-dns
+        shell: sudo -u vagrant sh /vagrant/installdns.sh
+      - name: install outyet
+        shell: sudo docker load --input=/vagrant/outyet.tar.gz
+
+[installdns.sh]        
+mkdir ~/go
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
+go get github.com/tools/godep
+go get github.com/mesosphere/mesos-dns
+cd $GOPATH/src/github.com/mesosphere/mesos-dns
+make restoredeps build
+cp /vagrant/config.json .
+
+
+[config.json]
+{
+  "zk": "zk://192.168.33.10:2181/mesos",
+  "masters": ["192.168.33.10:5050"],
+  "refreshSeconds": 60,
+  "ttl": 60,
+  "domain": "mesos",
+  "ns": "ns1",
+  "port": 53,
+  "resolvers": ["8.8.8.8"],
+  "timeout": 5,
+  "listener": "0.0.0.0",
+  "SOAMname": "root.ns1.mesos",
+  "SOARname": "ns1.mesos",
+  "SOARefresh": 60,
+  "SOARetry":   600,
+  "SOAExpire":  86400,
+  "SOAMinttl": 60,
+  "dnson": true,
+  "httpon": true,
+  "httpport": 8123,
+  "externalon": true,
+  "recurseon": true
+}
+
+[resolv.conf.j2]
+nameserver 192.168.33.10
+
+[Vagrantfile]
+ANSIBLE_GROUPS = {
+              "master" => ["node1"],
+              "nodes" => ["node2", "node3", "node4"],
+              "all_groups:children" => ["master", "nodes"]
+            }
+
+
+Vagrant.configure(2) do |config|
+    config.vm.box = "chef/centos-7.0"
+    config.vm.define "node1" do |node1|
+        node1.vm.network "private_network", ip: "192.168.33.10"
+        node1.vm.hostname = "node1"
+        node1.vm.provision "ansible" do |ansible|
+            ansible.playbook = "playbook.yml"
+            ansible.groups = ANSIBLE_GROUPS
+        end
+    end
+
+    config.vm.define "node2" do |node2|
+        node2.vm.network "private_network", ip: "192.168.33.11"
+        node2.vm.hostname = "node2"
+        node2.vm.provision "ansible" do |ansible|
+            ansible.playbook = "playbook.yml"
+            ansible.groups = ANSIBLE_GROUPS
+        end
+    end
+
+
+    config.vm.define "node3" do |node3|
+        node3.vm.network "private_network", ip: "192.168.33.12"
+        node3.vm.hostname = "node3"
+        node3.vm.provision "ansible" do |ansible|
+            ansible.playbook = "playbook.yml"
+            ansible.groups = ANSIBLE_GROUPS
+        end
+    end
+
+    config.vm.define "node4" do |node4|
+        node4.vm.network "private_network", ip: "192.168.33.13"
+        node4.vm.hostname = "node4"
+        node4.vm.provision "ansible" do |ansible|
+            ansible.playbook = "playbook.yml"
+            ansible.groups = ANSIBLE_GROUPS
+        end
+    end
+end
+
+
+

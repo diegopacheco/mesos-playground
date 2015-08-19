@@ -1,0 +1,15 @@
+4Winds% history
+    1  pwd
+    2  pact install python python-paramiko python-crypto gcc-g++ wget openssh python-setuptools
+    3  source ~/.bashrc
+    4  source ~/.zshrc
+    5  export PYTHONHOME=/usr
+    6  export PYTHONPATH=/usr/lib/python2.7
+    7  python /usr/lib/python2.7/site-packages/easy_install.py pip
+    8  python /cygdrive/c/Users/diego/Desktop/get-pip.py
+    9  pip install ansible
+
+http://www.azavea.com/blogs/labs/2014/10/running-vagrant-with-ansible-provisioning-on-windows/
+
+https://pip.pypa.io/en/latest/installing.html
+
